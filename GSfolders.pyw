@@ -72,39 +72,80 @@ def select_path():
     if folder_path:
         create_folders(folder_path)
 
+import tkinter as tk
+from tkinter import ttk
+import tkinter.font as tkFont
+
 root = tk.Tk()
-root.title("文件夹生成器")
+root.title("GSfolders")
 
 # 让窗口居中
-root.geometry("300x200+{}+{}".format(int(root.winfo_screenwidth()/2 - 150), int(root.winfo_screenheight()/2 - 100)))
+root.geometry("350x230+{}+{}".format(int(root.winfo_screenwidth()/2 - 150), int(root.winfo_screenheight()/2 - 100)))
 
 font = ("黑体", 12)
 default_font = tkFont.Font(family='黑体', size=12, slant='italic')
 
+# 使用 ttk.Style 创建样式对象
+style = ttk.Style()
+
+# 设置应用程序样式主题
+# theme_name = style.theme_names()[0]
+style.theme_use("vista")
+
+# 配置 TButton 样式
+style.configure("TButton",
+                padding=5,
+                relief="flat",
+                font=font,
+                foreground="#3B3E41", ## 注意这里
+                background="#F0F0F0",
+                bordercolor="#A5A5A5",
+                darkcolor="#A5A5A5",
+                lightcolor="#A5A5A5")
+
+# 配置 TEntry 样式
+style.configure("TEntry",
+                padding=5,
+                relief="flat",
+                font=default_font,
+                foreground="#3B3E41", ## 注意这里
+                background="#FFFFFF",
+                bordercolor="#A5A5A5",
+                darkcolor="#A5A5A5",
+                lightcolor="#A5A5A5")
+
 folder_name_label = tk.Label(root, text="文件夹名称", font=font, fg="#3B3E41")
 folder_name_label.pack(pady=(10,1))
 
-folder_name_entry = tk.Entry(root, justify='center', font=default_font, width=22)
+folder_name_entry = ttk.Entry(root, width=22, justify='center', font=default_font, style="TEntry", foreground='#808080')
 folder_name_entry.pack(pady=(5,10))
+
 folder_name_entry.insert(0, '加“/”可创建子文件夹')
-folder_name_entry.config(fg='#BFBFBF')
+
 def on_entry_click(event):
     if folder_name_entry.get() == '加“/”可创建子文件夹':
         folder_name_entry.delete(0, tk.END) # 删除当前的文字
-        folder_name_entry.config(fg='#333333', font=font)
-# 绑定方法到entry框中的单击事件上
-folder_name_entry.bind('<FocusIn>', on_entry_click)
+        folder_name_entry.config(foreground='#333333', font=('黑体', 12))
 
-num_folders_label = tk.Label(root, text="文件夹数量:", font=font, fg="#3B3E41")
+def on_entry_leave(event):
+    if not folder_name_entry.get():
+        folder_name_entry.insert(0, '加“/”可创建子文件夹')
+        folder_name_entry.config(foreground='#808080', font=default_font)
+
+# 绑定单击和离开事件
+folder_name_entry.bind("<Button-1>", on_entry_click)
+folder_name_entry.bind("<FocusOut>", on_entry_leave)
+
+num_folders_label = tk.Label(root, text="文件夹数量:", font=font, fg="#3B3E41" )
 num_folders_label.pack(pady=(3,1))
 
-num_folders_entry = tk.Entry(root, justify='center', font=font, fg='#333333', width=22)
+num_folders_entry = ttk.Entry(root, justify='center', font=font, width=22, style="TEntry")
 num_folders_entry.pack(pady=(5,10))
 
 def create_folders_callback():
     select_path()
 
-create_button = tk.Button(root, text="创建文件夹", command=create_folders_callback, font=font, fg="#3B3E41")
+create_button = ttk.Button(root, text="创建文件夹", command=create_folders_callback, style="TButton")
 create_button.pack(pady=20)
 
 root.mainloop()
