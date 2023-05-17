@@ -4,6 +4,7 @@ import tkinter.font as tkFont
 from tkinter import filedialog
 from tkinter import messagebox
 
+
 def create_folders(folder_path):
     folder_name = folder_name_entry.get()
     num_folders = num_folders_entry.get()
@@ -43,12 +44,35 @@ def create_folders(folder_path):
                     current_path = os.path.join(current_path, current_folder_name)
                     os.makedirs(current_path, exist_ok=True)
                 folder_path_i = os.path.join(current_path, sub_folder_name)
-            
+
             try:
                 os.makedirs(folder_path_i)
                 success_count += 1
             except:
                 fail_count += 1
+
+    elif '&' in folder_name:
+        folder_names = folder_name.replace('&', ' ').strip().split()
+        for i in range(1, num_folders+1):
+            if num_folders == 1:
+                for name in folder_names:
+                    folder_path_i = os.path.join(folder_path, name.strip())
+                    try:
+                        os.makedirs(folder_path_i)
+                        success_count += 1
+                    except:
+                        fail_count += 1
+            else:
+                dir_name = f"{folder_name}_{i}"
+                folder_path_i = os.path.join(folder_path, dir_name)
+                os.makedirs(folder_path_i, exist_ok=True)
+                for name in folder_names:
+                    sub_folder_path = os.path.join(folder_path_i, name.strip())
+                    try:
+                        os.makedirs(sub_folder_path)
+                        success_count += 1
+                    except:
+                        fail_count += 1
 
     else:
         for i in range(1, num_folders+1):
@@ -78,6 +102,10 @@ import tkinter.font as tkFont
 
 root = tk.Tk()
 root.title("GSfolders")
+
+icon = tk.PhotoImage(file='./icon.png')
+root.iconphoto(True, icon)
+
 
 # 让窗口居中
 root.geometry("350x230+{}+{}".format(int(root.winfo_screenwidth()/2 - 150), int(root.winfo_screenheight()/2 - 100)))
